@@ -7,9 +7,11 @@ export default function authorize(roles: any = []) {
     roles = [roles];
   }
   return [
-    jwt({ secret, algorithms: ["HS256"] }),
+    jwt({ secret, algorithms: ["HS256"], requestProperty: "user" }),
+
     async (req: any, res: any, next: any) => {
       const account = await db.Account.findByPk(req.user.id);
+
       if (!account || (roles.length && !roles.includes(account.role))) {
         return res.status(401).json({ message: "Unauthorized" });
       }
